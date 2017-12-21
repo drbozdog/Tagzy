@@ -17,6 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 /**
  * Created by drbozdog on 17/12/17.
@@ -29,7 +30,7 @@ public class RecordsRepository {
 
     @Inject
     public RecordsRepository() {
-        Retrofit service = new Retrofit.Builder().baseUrl("http://10.0.3.2:8080")
+        Retrofit service = new Retrofit.Builder().baseUrl("http://10.0.3.2:8888")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
@@ -38,15 +39,15 @@ public class RecordsRepository {
 
 
     public interface TagzyApi {
-        @GET("/records")
-        Observable<List<TagRecord>> getRecords();
+        @GET("/records/{limit}")
+        Observable<List<TagRecord>> getRecords(@Path("limit") int limit);
 
         @POST("/record")
         Observable<JsonObject> updateRecord(@Body TagRecord record);
     }
 
-    public Observable<List<TagRecord>> getRecords() {
-        return mTagzyApi.getRecords();
+    public Observable<List<TagRecord>> getRecords(int limit) {
+        return mTagzyApi.getRecords(limit);
     }
 
     public Observable<JsonObject> update(TagRecord record) {

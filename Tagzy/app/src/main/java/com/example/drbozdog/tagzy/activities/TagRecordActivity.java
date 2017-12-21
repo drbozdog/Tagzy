@@ -1,6 +1,7 @@
 package com.example.drbozdog.tagzy.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.example.drbozdog.tagzy.R;
 import com.example.drbozdog.tagzy.TagzyApplication;
@@ -24,6 +28,9 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -31,6 +38,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 import io.reactivex.subscribers.DisposableSubscriber;
 
 /**
@@ -63,6 +72,44 @@ public class TagRecordActivity extends AppCompatActivity implements TagRecordFra
         mRecordsAdapter = new RecordsViewPagerAdapter(getSupportFragmentManager());
         mRecyclerView.setAdapter(mRecordsAdapter);
 
+        loadRecords();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mDisposableSubscriber != null && !mDisposableSubscriber.isDisposed()) {
+            mDisposableSubscriber.dispose();
+            mDisposableSubscriber = null;
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.tags_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_status:
+                openStatus();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void openStatus() {
+        Intent i = new Intent(this, StatusActivity.class);
+        i.putExtra(StatusActivity.EXTRA_SUCCESSFUL, mTagRecordViewModel.getSuccessfulSaves().size());
+        i.putExtra(StatusActivity.EXTRA_ERRORS, mTagRecordViewModel.getFailedSaves().size());
+        startActivity(i);
+    }
+
+    private void loadRecords() {
         if (mDisposableSubscriber == null || mDisposableSubscriber.isDisposed()) {
             mDisposableSubscriber = new DisposableObserver<List<TagRecord>>() {
                 @Override
@@ -72,7 +119,7 @@ public class TagRecordActivity extends AppCompatActivity implements TagRecordFra
 
                 @Override
                 public void onError(Throwable t) {
-                    Log.d(TAG, "onError: Loading records");
+                    Log.e(TAG, "onError: Loading records", t);
                 }
 
                 @Override
@@ -86,21 +133,14 @@ public class TagRecordActivity extends AppCompatActivity implements TagRecordFra
     }
 
     @Override
-    protected void onDestroy() {
-        if (mDisposableSubscriber != null && !mDisposableSubscriber.isDisposed()) {
-            mDisposableSubscriber.dispose();
-            mDisposableSubscriber = null;
-        }
-        super.onDestroy();
-    }
-
-    @Override
     public void OnTagSelected(TagRecord record) {
         mRecordsAdapter.updateItem(record, mRecyclerView.getCurrentItem());
         mRecyclerView.setCurrentItem(mRecyclerView.getCurrentItem() + 1);
 
-        //TODO load other
-        //TODO create stats objects
+        if (mTagRecordViewModel.needToLoadRecords(mRecyclerView.getCurrentItem())) {
+            loadRecords();
+        }
+
 
         mTagRecordViewModel.save(record).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribeWith(new Observer<Object>() {
             @Override
@@ -115,7 +155,7 @@ public class TagRecordActivity extends AppCompatActivity implements TagRecordFra
 
             @Override
             public void onError(Throwable e) {
-                Log.d(TAG, "onError: Update Error");
+                Log.e(TAG, "onError: Update Error", e);
             }
 
             @Override

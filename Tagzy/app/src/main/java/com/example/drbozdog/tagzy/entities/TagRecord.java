@@ -84,7 +84,7 @@ public class TagRecord implements Serializable {
         }
     }
 
-    public class MiningMetaData {
+    public class MiningMetaData implements Serializable {
         public HashMap<String, String> getTags() {
             return tags;
         }

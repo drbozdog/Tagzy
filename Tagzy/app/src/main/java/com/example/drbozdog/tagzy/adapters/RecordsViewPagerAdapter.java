@@ -25,7 +25,6 @@ public class RecordsViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public void update(List<TagRecord> recordList, TagJob tagJob) {
-        mTagRecordList.clear();
         mTagRecordList.addAll(recordList);
         mTagJob = tagJob;
         notifyDataSetChanged();

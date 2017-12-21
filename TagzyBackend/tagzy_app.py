@@ -1,11 +1,12 @@
 from flask import Flask, request
 import json
+import os
 
 from managers.records_manager import RecordsManager
 
 app = Flask(__name__)
 
-records_manager = RecordsManager()
+records_manager = RecordsManager('/Users/drbozdog/TagzyApp/TagzyBackend/config.json')
 
 
 @app.route('/')
@@ -13,13 +14,10 @@ def hello_world():
     return 'Hello World!'
 
 
-@app.route('/records', methods=['GET', 'POST'])
-def get_records():
-    if request.method == 'POST':
-        return records_manager.update_records()
-    else:
-        records = records_manager.get_records()
-        return json.dumps(records)
+@app.route('/records/<limit>', methods=['GET'])
+def get_records(limit):
+    records = records_manager.get_records(limit)
+    return json.dumps(records)
 
 
 @app.route("/record", methods=['POST'])
@@ -30,4 +28,4 @@ def update_record():
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=8080,debug=True)
+    app.run(host='localhost', port=8888, debug=True)

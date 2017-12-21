@@ -5,16 +5,16 @@ import json
 
 
 class RecordsRepository():
-    def __init__(self):
-        with open("config.json") as f:
-            config = json.loads(f)
+    def __init__(self, config_file):
+        with open(config_file) as f:
+            config = json.load(f)
 
         self.mongo = MongoClient(config['mongo_ip'], port=config['mongo_port'])
         self.mongo_db = self.mongo.get_database('local')
 
-    def get_records(self):
-        limit = 40
-        collection_name = 'test_thetrades_twitter_users'
+    def get_records(self, limit):
+        limit = int(limit)
+        collection_name = 'thetrades_twitter_users'
 
         projection = {
             "_id": False,

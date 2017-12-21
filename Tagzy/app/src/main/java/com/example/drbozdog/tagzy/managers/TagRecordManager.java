@@ -24,8 +24,8 @@ public class TagRecordManager {
     }
 
 
-    public Observable<List<TagRecord>> getRecords() {
-        return mRecordsRepository.getRecords();
+    public Observable<List<TagRecord>> getRecords(int limit) {
+        return mRecordsRepository.getRecords(limit);
     }
 
     public Observable<JsonObject> save(TagRecord record) {
