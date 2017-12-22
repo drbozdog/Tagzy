@@ -1,5 +1,6 @@
 package com.example.drbozdog.tagzy.di.graph;
 
+import com.example.drbozdog.tagzy.activities.StatsActivity;
 import com.example.drbozdog.tagzy.activities.TagRecordActivity;
 import com.example.drbozdog.tagzy.fragments.TagRecordFragment;
 
@@ -12,4 +13,6 @@ public interface Graph {
     void inject(TagRecordActivity activity);
 
     void inject(TagRecordFragment fragment);
+
+    void inject(StatsActivity statsActivity);
 }

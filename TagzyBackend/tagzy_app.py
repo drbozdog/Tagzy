@@ -6,7 +6,7 @@ from managers.records_manager import RecordsManager
 
 app = Flask(__name__)
 
-records_manager = RecordsManager('/Users/drbozdog/TagzyApp/TagzyBackend/config.json')
+records_manager = RecordsManager('/Users/drbozdog/Tagzy/TagzyBackend/config.json')
 
 
 @app.route('/')
@@ -25,6 +25,12 @@ def update_record():
     record = request.get_json(force=True)
     status = records_manager.update_record(record)
     return json.dumps(status)
+
+
+@app.route('/stats', methods=['GET'])
+def get_stats():
+    stats = records_manager.get_stats()
+    return json.dumps(stats)
 
 
 if __name__ == '__main__':

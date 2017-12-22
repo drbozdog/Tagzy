@@ -10,3 +10,6 @@ class RecordsManager():
 
     def update_record(self, record):
         return self.records_repository.update_record(record)
+
+    def get_stats(self):
+        return self.records_repository.get_stats()

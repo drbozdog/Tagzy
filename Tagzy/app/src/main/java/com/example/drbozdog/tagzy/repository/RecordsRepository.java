@@ -1,10 +1,9 @@
 package com.example.drbozdog.tagzy.repository;
 
+import com.example.drbozdog.tagzy.entities.StatsMetric;
 import com.example.drbozdog.tagzy.entities.TagRecord;
 import com.google.gson.JsonObject;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -44,6 +43,9 @@ public class RecordsRepository {
 
         @POST("/record")
         Observable<JsonObject> updateRecord(@Body TagRecord record);
+
+        @GET("/stats")
+        Observable<List<StatsMetric>> getStats();
     }
 
     public Observable<List<TagRecord>> getRecords(int limit) {
@@ -52,5 +54,9 @@ public class RecordsRepository {
 
     public Observable<JsonObject> update(TagRecord record) {
         return mTagzyApi.updateRecord(record);
+    }
+
+    public Observable<List<StatsMetric>> getStats() {
+        return mTagzyApi.getStats();
     }
 }

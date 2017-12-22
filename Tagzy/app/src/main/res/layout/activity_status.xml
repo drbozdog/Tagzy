@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.drbozdog.tagzy.activities.StatusActivity">
+    tools:context="com.example.drbozdog.tagzy.activities.StatsActivity">
 
     <TextView
         android:id="@+id/txt_tagged"
@@ -17,5 +17,10 @@
         android:id="@+id/txt_errors"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list_statsmetrics"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

@@ -39,9 +39,27 @@ class RecordsRepository():
         return records
 
     def update_record(self, record):
-        collection_name = 'test_thetrades_twitter_users'
+        collection_name = 'thetrades_twitter_users'
         collection = self.mongo_db.get_collection(collection_name)
 
         status = collection.update_one({"id_str": record['id']}, {"$set": record}, upsert=False)
 
         return json.loads(dumps(status.raw_result))
+
+    def get_stats(self):
+        collection_name = 'thetrades_twitter_users'
+        collection = self.mongo_db.get_collection(collection_name)
+
+        tagged = collection.count({"mining_metadata.tags.Ridgid Professionals": {"$exists": True}})
+        total = collection.count({})
+        values = [v for v in collection.aggregate([{'$group':
+                                                        {'_id': '$mining_metadata.tags.Ridgid Professionals',
+                                                         'count': {'$sum': 1}}
+                                                    }])]
+
+        values.insert(0, {"_id": "Tagged Count", "count": tagged})
+        values.insert(0, {"_id": "Total Count", "count": total})
+
+        values = [{"name": v['_id'], "count": v['count']} for v in values]
+
+        return values
