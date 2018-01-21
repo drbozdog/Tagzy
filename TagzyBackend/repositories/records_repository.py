@@ -32,9 +32,14 @@ class RecordsRepository():
         }
 
         collection = self.mongo_db.get_collection(collection_name)
-        records = [r for r in collection.aggregate([{"$match": {"mining_metadata.tags": {"$exists": False}}}
-                                                       , {'$sample': {'size': limit}}
-                                                       , {"$project": projection}])]
+        records = [r for r in collection.aggregate([{"$match": {"$and":
+            [
+                {"mining_metadata.tags": {"$exists": False}},
+                {"mining_metadata.predictions_probabilities.Ridgid Professionals.Professional": {"$gt": 0.18}}
+            ]
+        }}
+            , {'$sample': {'size': limit}}
+            , {"$project": projection}])]
 
         return records
 

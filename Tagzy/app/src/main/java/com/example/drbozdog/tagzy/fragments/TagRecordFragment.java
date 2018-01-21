@@ -137,7 +137,8 @@ public class TagRecordFragment extends android.support.v4.app.Fragment {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
                 layout.setLayoutParams(params);
                 Button btnTag = (Button) getActivity().getLayoutInflater().inflate(R.layout.tag_button, null);
-                btnTag.setText(job.getTags().get(i));
+                String predictedValue = String.valueOf(mViewModel.getTagRecord().getPrediction(job.getName(), job.getTags().get(i)));
+                btnTag.setText(job.getTags().get(i) + ":" + predictedValue);
                 btnTag.setOnClickListener(view -> {
                     mViewModel.setSelectedTagIndex(i);
                     updateSelectedTag();

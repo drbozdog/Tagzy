@@ -6,7 +6,7 @@ from managers.records_manager import RecordsManager
 
 app = Flask(__name__)
 
-records_manager = RecordsManager('/Users/drbozdog/Tagzy/TagzyBackend/config.json')
+records_manager = RecordsManager('/Users/drbozdog/TagzyApp/TagzyBackend/config.json')
 
 
 @app.route('/')
@@ -34,4 +34,4 @@ def get_stats():
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=8888, debug=True)
+    app.run(host='0.0.0.0', port=16000, debug=False)

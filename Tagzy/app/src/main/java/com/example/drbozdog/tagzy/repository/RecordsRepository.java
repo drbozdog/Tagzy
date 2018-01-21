@@ -29,7 +29,7 @@ public class RecordsRepository {
 
     @Inject
     public RecordsRepository() {
-        Retrofit service = new Retrofit.Builder().baseUrl("http://10.0.3.2:8888")
+        Retrofit service = new Retrofit.Builder().baseUrl("http://78.96.152.221:16000")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();

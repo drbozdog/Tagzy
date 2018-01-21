@@ -66,7 +66,7 @@ public class TagRecord implements Serializable {
     }
 
     public MiningMetaData getMining_metadata() {
-        if (mining_metadata==null){
+        if (mining_metadata == null) {
             mining_metadata = new MiningMetaData();
         }
         return mining_metadata;
@@ -84,11 +84,29 @@ public class TagRecord implements Serializable {
         }
     }
 
+    public float getPrediction(String job, String tag) {
+        if (getMining_metadata().getPredictionsProbabilities().containsKey(job) && getMining_metadata().getPredictionsProbabilities().get(job).containsKey(tag)) {
+            return getMining_metadata().getPredictionsProbabilities().get(job).get(tag);
+        } else {
+            return -1f;
+        }
+    }
+
     public class MiningMetaData implements Serializable {
         public HashMap<String, String> getTags() {
+            if (tags == null) {
+                tags = new HashMap<>();
+            }
             return tags;
         }
 
         HashMap<String, String> tags = new HashMap<>();
+
+        public HashMap<String, HashMap<String, Float>> getPredictionsProbabilities() {
+            return predictions_probabilities;
+        }
+
+        HashMap<String, HashMap<String, Float>> predictions_probabilities = new HashMap<>();
+        HashMap<String, String> predictions = new HashMap<>();
     }
 }
