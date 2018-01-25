@@ -89,4 +89,8 @@ public class TagRecordViewModel {
             return false;
         }
     }
+
+    public boolean showProgress() {
+        return mSuccessfulSaves.size() % 25 == 0;
+    }
 }

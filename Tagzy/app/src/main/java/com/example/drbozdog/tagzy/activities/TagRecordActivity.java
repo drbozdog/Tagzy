@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.drbozdog.tagzy.R;
 import com.example.drbozdog.tagzy.TagzyApplication;
@@ -126,6 +127,10 @@ public class TagRecordActivity extends AppCompatActivity implements TagRecordFra
 
         if (mTagRecordViewModel.needToLoadRecords(mRecyclerView.getCurrentItem())) {
             loadRecords();
+        }
+
+        if (mTagRecordViewModel.showProgress()) {
+            Toast.makeText(this, "Progress: " + String.valueOf(mTagRecordViewModel.getSuccessfulSaves().size()), Toast.LENGTH_SHORT).show();
         }
 
 
