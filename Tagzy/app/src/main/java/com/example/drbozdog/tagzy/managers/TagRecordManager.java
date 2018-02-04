@@ -25,15 +25,15 @@ public class TagRecordManager {
     }
 
 
-    public Observable<List<TagRecord>> getRecords(int limit) {
-        return mRecordsRepository.getRecords(limit);
+    public Observable<List<JsonObject>> getRecords(int jobid, int limit) {
+        return mRecordsRepository.getRecords(jobid, limit);
     }
 
-    public Observable<JsonObject> save(TagRecord record) {
-        return mRecordsRepository.update(record);
+    public Observable<JsonObject> save(int jobid, TagRecord record) {
+        return mRecordsRepository.update(jobid, record);
     }
 
-    public Observable<List<StatsMetric>> getStats() {
-        return mRecordsRepository.getStats();
+    public Observable<List<StatsMetric>> getStats(int jobid) {
+        return mRecordsRepository.getStats(jobid);
     }
 }

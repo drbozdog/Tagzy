@@ -11,6 +11,7 @@ import com.example.drbozdog.tagzy.R;
 import com.example.drbozdog.tagzy.TagzyApplication;
 import com.example.drbozdog.tagzy.adapters.StatsMetricsAdapter;
 import com.example.drbozdog.tagzy.entities.StatsMetric;
+import com.example.drbozdog.tagzy.entities.TagJob;
 import com.example.drbozdog.tagzy.viewmodels.StatsViewModel;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class StatsActivity extends AppCompatActivity {
     private static final String TAG = StatsActivity.class.getSimpleName();
     public static String EXTRA_SUCCESSFUL = "extra_successful";
     public static String EXTRA_ERRORS = "extra_errors";
+    public static String EXTRA_JOB = "extra_job";
 
     @BindView(R.id.txt_tagged)
     TextView mTxtTaggedCount;
@@ -51,10 +53,13 @@ public class StatsActivity extends AppCompatActivity {
 
         int uploadSuccessfulCount = getIntent().getIntExtra(EXTRA_SUCCESSFUL, 0);
         int uploadErrorsCount = getIntent().getIntExtra(EXTRA_ERRORS, 0);
+        TagJob job = (TagJob) getIntent().getSerializableExtra(EXTRA_JOB);
 
         ButterKnife.bind(this);
 
         TagzyApplication.getGraph().inject(this);
+
+        mStatsViewModel.init(job);
 
         mTxtTaggedCount.setText("Successful uploaded tagged records: " + String.valueOf(uploadSuccessfulCount));
         mTxtErrors.setText("Errors when uploading tagged records: " + String.valueOf(uploadErrorsCount));

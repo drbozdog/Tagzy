@@ -12,53 +12,35 @@ class RecordsRepository():
         self.mongo = MongoClient(config['mongo_ip'], port=config['mongo_port'])
         self.mongo_db = self.mongo.get_database('local')
 
-    def get_records(self, limit):
+    def get_records(self, collection, query, limit):
         limit = int(limit)
-        collection_name = 'thetrades_twitter_users'
-
-        projection = {
-            "_id": False,
-            "id": True,
-            "description": True,
-            "name": True,
-            "profile_background_image_url": True,
-            "profile_banner_url": True,
-            "profile_image_url": True,
-            "screen_name": True,
-            "verified": True,
-            "created_at": True,
-            "url": True,
-            "mining_metadata": True
-        }
+        collection_name = collection
 
         collection = self.mongo_db.get_collection(collection_name)
-        records = [r for r in collection.aggregate([{"$match": {"$and":
-            [
-                {"mining_metadata.tags": {"$exists": False}},
-                {"mining_metadata.predictions_probabilities.Ridgid Professionals.Professional": {"$gt": 0.18}}
-            ]
-        }}
-            , {'$sample': {'size': limit}}
-            , {"$project": projection}])]
+        records = [r for r in collection.aggregate(query)]
 
         return records
 
-    def update_record(self, record):
-        collection_name = 'thetrades_twitter_users'
+    def update_record(self, record, collection, name):
+        collection_name = collection
         collection = self.mongo_db.get_collection(collection_name)
 
-        status = collection.update_one({"id_str": record['id']}, {"$set": record}, upsert=False)
+        status = collection.update_one({"id_str": record['id']},
+                                       {"$set": {
+                                           "mining_metadata.tags.{}".format(name): record['mining_metadata']['tags'][
+                                               name]}},
+                                       upsert=False)
 
         return json.loads(dumps(status.raw_result))
 
-    def get_stats(self):
-        collection_name = 'thetrades_twitter_users'
+    def get_stats(self, collection, name):
+        collection_name = collection
         collection = self.mongo_db.get_collection(collection_name)
 
-        tagged = collection.count({"mining_metadata.tags.Ridgid Professionals": {"$exists": True}})
+        tagged = collection.count({"mining_metadata.tags.{}".format(name): {"$exists": True}})
         total = collection.count({})
         values = [v for v in collection.aggregate([{'$group':
-                                                        {'_id': '$mining_metadata.tags.Ridgid Professionals',
+                                                        {'_id': '$mining_metadata.tags.{}'.format(name),
                                                          'count': {'$sum': 1}}
                                                     }])]
 

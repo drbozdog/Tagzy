@@ -15,14 +15,24 @@
         <activity
             android:name=".activities.TagRecordActivity"
             android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".activities.StatsActivity"
+            android:screenOrientation="portrait">
+
+
+        </activity>
+
+        <activity
+            android:name=".activities.TagJobsActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.StatsActivity">
-        </activity>
+
     </application>
 
 </manifest>

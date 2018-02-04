@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.drbozdog.tagzy.R;
 import com.example.drbozdog.tagzy.TagzyApplication;
 import com.example.drbozdog.tagzy.adapters.RecordsViewPagerAdapter;
+import com.example.drbozdog.tagzy.entities.TagJob;
 import com.example.drbozdog.tagzy.entities.TagRecord;
 import com.example.drbozdog.tagzy.fragments.TagRecordFragment;
 import com.example.drbozdog.tagzy.viewmodels.TagRecordViewModel;
@@ -37,6 +38,7 @@ import io.reactivex.schedulers.Schedulers;
 public class TagRecordActivity extends AppCompatActivity implements TagRecordFragment.OnStatusChangeListener {
 
     private static final String TAG = TagRecordActivity.class.getSimpleName();
+    public static final String EXTRA_TAGJOB = "extra_job";
 
     @Inject
     TagRecordViewModel mTagRecordViewModel;
@@ -56,6 +58,10 @@ public class TagRecordActivity extends AppCompatActivity implements TagRecordFra
         ButterKnife.bind(this);
 
         ((TagzyApplication) getApplicationContext()).getGraph().inject(this);
+
+        TagJob job = (TagJob) getIntent().getSerializableExtra(EXTRA_TAGJOB);
+
+        mTagRecordViewModel.init(job);
 
         mRecordsAdapter = new RecordsViewPagerAdapter(getSupportFragmentManager());
         mRecyclerView.setAdapter(mRecordsAdapter);
@@ -94,6 +100,7 @@ public class TagRecordActivity extends AppCompatActivity implements TagRecordFra
         Intent i = new Intent(this, StatsActivity.class);
         i.putExtra(StatsActivity.EXTRA_SUCCESSFUL, mTagRecordViewModel.getSuccessfulSaves().size());
         i.putExtra(StatsActivity.EXTRA_ERRORS, mTagRecordViewModel.getFailedSaves().size());
+        i.putExtra(StatsActivity.EXTRA_JOB, mTagRecordViewModel.getJob());
         startActivity(i);
     }
 

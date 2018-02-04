@@ -8,43 +8,37 @@ import java.util.List;
  */
 
 public class TagJob implements Serializable {
-    String mName;
-    String mId;
-    List<String> mTags;
-    String mTagSourceName;
-    String mTagSourceQuery;
-    List<TagSourceField> mTagsSourceFields;
+    String name;
+    int id;
+    String type;
+    List<String> tags;
+    String collection;
 
-    public TagJob(String name, String id, List<String> tags, String tagSourceName, String tagSourceQuery, List<TagSourceField> tagsSourceFields) {
-        mName = name;
-        mId = id;
-        mTags = tags;
-        mTagSourceName = tagSourceName;
-        mTagSourceQuery = tagSourceQuery;
-        mTagsSourceFields = tagsSourceFields;
+    public TagJob(String name, int id, String type, List<String> tags, String tagSourceName, String tagSourceQuery) {
+        this.name = name;
+        this.id = id;
+        type = type;
+        this.tags = tags;
+        collection = tagSourceName;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
-    public String getId() {
-        return mId;
+    public int getId() {
+        return id;
     }
 
     public List<String> getTags() {
-        return mTags;
+        return tags;
     }
 
-    public String getTagSourceName() {
-        return mTagSourceName;
+    public String getCollection() {
+        return collection;
     }
 
-    public String getTagSourceQuery() {
-        return mTagSourceQuery;
-    }
-
-    public List<TagSourceField> getTagsSourceFields() {
-        return mTagsSourceFields;
+    public String getType() {
+        return type;
     }
 }
