@@ -11,5 +11,5 @@ class RecordsManager():
     def update_record(self, collection, record, name):
         return self.records_repository.update_record(record, collection, name)
 
-    def get_stats(self, collection, name):
-        return self.records_repository.get_stats(collection, name)
+    def get_stats(self, collection, query, name):
+        return self.records_repository.get_stats(collection, query, name)

@@ -33,12 +33,12 @@ class RecordsRepository():
 
         return json.loads(dumps(status.raw_result))
 
-    def get_stats(self, collection, name):
+    def get_stats(self, collection, query, name):
         collection_name = collection
         collection = self.mongo_db.get_collection(collection_name)
 
         tagged = collection.count({"mining_metadata.tags.{}".format(name): {"$exists": True}})
-        total = collection.count({})
+        total = collection.count(query)
         values = [v for v in collection.aggregate([{'$group':
                                                         {'_id': '$mining_metadata.tags.{}'.format(name),
                                                          'count': {'$sum': 1}}

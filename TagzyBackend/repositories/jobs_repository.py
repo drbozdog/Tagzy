@@ -28,6 +28,7 @@ class JobsRepository():
                         "mining_metadata.predictions_probabilities.Ridgid Professionals": True
                     }}
                 ],
+                "stats_query": {},
                 "collection": "thetrades_twitter_users",
                 "tags": ["Professional", "Shop", "Manufacturer", "Blogger", "Jobs", "None"]
             },
@@ -39,21 +40,30 @@ class JobsRepository():
                     {"$match": {"$and":
                         [
                             {"mining_metadata.tags.Ridgid Professionals Tweets": {"$exists": False}},
-                            {"mining-metadata.sources.thetrades-twitter-posts.query": "professionals"}
+                            {"mining-metadata.sources.thetrades-twitter-posts.query": "professionals"},
+                            {"retweeted_status": {"$exists": False}},
+                            {"quoted_status": {"$exists": False}},
                         ]
                     }}
                     , {'$sample': {'size': 80}}
                     , {"$project": {
                         "_id": False,
                         "id": True,
-                        "entities.urls": True,
+                        "entities": True,
                         "text": True,
                         "user.screen_name": True,
                         "extended_tweet.full_text": True,
-                        "extended_tweet.entities.url": True,
+                        "extended_tweet.entities": True,
                         "mining_metadata.predictions_probabilities.Ridgid Professionals Tweets": True
                     }}
                 ],
+                "stats_query": {
+                    "$and": [
+                        {"mining-metadata.sources.thetrades-twitter-posts.query": "professionals"},
+                        {"retweeted_status": {"$exists": False}},
+                        {"quoted_status": {"$exists": False}},
+                    ]
+                },
                 "collection": "thetrades_twitter_posts",
                 "tags": ["Advertising", "Tips", "Career", "Product", "OnSite", "None"]
             }

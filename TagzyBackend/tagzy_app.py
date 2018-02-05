@@ -40,7 +40,8 @@ def get_stats(jobid):
     job = jobs_manager.get_job_by_id(jobid)
     collection = job['collection']
     job_name = job['name']
-    stats = records_manager.get_stats(collection, job_name)
+    stats_query = job['stats_query']
+    stats = records_manager.get_stats(collection, stats_query, job_name)
     return json.dumps(stats)
 
 
