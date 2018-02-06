@@ -15,10 +15,12 @@ import android.widget.TextView;
 
 import com.example.drbozdog.tagzy.R;
 import com.example.drbozdog.tagzy.adapters.MediaAdapter;
+import com.example.drbozdog.tagzy.adapters.UrlAdapter;
 import com.example.drbozdog.tagzy.entities.TagJob;
 import com.example.drbozdog.tagzy.entities.TagRecord;
 import com.example.drbozdog.tagzy.entities.TwitterPostTagRecord;
 import com.example.drbozdog.tagzy.entities.TwitterUserTagRecord;
+import com.leocardz.link.preview.library.TextCrawler;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ public class TwitterPostTagRecordFragment extends Fragment {
     public static final String EXTRA_RECORD = "extra_record";
     private static final String TAG = TwitterPostTagRecordFragment.class.getSimpleName();
     private TagRecord mTagRecord;
+    private TextCrawler mTextCrawler;
 
     public static TwitterPostTagRecordFragment NewInstance(TagRecord tagRecord) {
         TwitterPostTagRecordFragment tagRecordFragment = new TwitterPostTagRecordFragment();
@@ -58,6 +61,7 @@ public class TwitterPostTagRecordFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTagRecord = (TagRecord) getArguments().getSerializable(EXTRA_RECORD);
+        mTextCrawler = new TextCrawler();
     }
 
     @Nullable
@@ -72,6 +76,14 @@ public class TwitterPostTagRecordFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onDestroy() {
+        if (mTextCrawler != null) {
+            mTextCrawler.cancel();
+        }
+        super.onDestroy();
+    }
+
     private void updateUI(TagRecord currentTagRecord) {
         TwitterPostTagRecord current = (TwitterPostTagRecord) currentTagRecord;
         mTxtUserName.setText(current.getUserName());
@@ -79,7 +91,6 @@ public class TwitterPostTagRecordFragment extends Fragment {
 
         List<String> mediaUrls = new ArrayList<>();
         if (current.getEntities().getMedia() != null) {
-            Log.d(TAG, "updateUI: Media exists");
             for (int i = 0; i < current.getEntities().getMedia().size(); i++) {
                 TwitterPostTagRecord.Media media = current.getEntities().getMedia().get(i);
                 mediaUrls.add(media.getMedia_url());
@@ -87,7 +98,6 @@ public class TwitterPostTagRecordFragment extends Fragment {
         }
 
         if (current.getExtended_tweet() != null && current.getExtended_tweet().getEntities().getMedia() != null) {
-            Log.d(TAG, "updateUI: Extended Media exists");
             for (int i = 0; i < current.getExtended_tweet().getEntities().getMedia().size(); i++) {
                 TwitterPostTagRecord.Media media = current.getExtended_tweet().getEntities().getMedia().get(i);
                 mediaUrls.add(media.getMedia_url());
@@ -97,5 +107,27 @@ public class TwitterPostTagRecordFragment extends Fragment {
         MediaAdapter mediaAdapter = new MediaAdapter(mediaUrls);
         mRecyclerViewMedia.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, true));
         mRecyclerViewMedia.setAdapter(mediaAdapter);
+
+        List<String> urls = new ArrayList<>();
+        if (current.getEntities().getUrls() != null) {
+            for (int i = 0; i < current.getEntities().getUrls().size(); i++) {
+                TwitterPostTagRecord.Url url = current.getEntities().getUrls().get(i);
+                if (!urls.contains(url.getExpanded_url())) {
+                    urls.add(url.getExpanded_url());
+                }
+            }
+        }
+        if (current.getExtended_tweet() != null && current.getExtended_tweet().getEntities().getUrls() != null) {
+            for (int i = 0; i < current.getExtended_tweet().getEntities().getUrls().size(); i++) {
+                TwitterPostTagRecord.Url url = current.getExtended_tweet().getEntities().getUrls().get(i);
+                if (!urls.contains(url.getExpanded_url())) {
+                    urls.add(url.getExpanded_url());
+                }
+            }
+        }
+
+        UrlAdapter urlAdapter = new UrlAdapter(mTextCrawler, urls);
+        mRecyclerViewUrls.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true));
+        mRecyclerViewUrls.setAdapter(urlAdapter);
     }
 }
