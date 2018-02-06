@@ -1,10 +1,12 @@
 package com.example.drbozdog.tagzy.adapters;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -66,7 +68,11 @@ public class UrlAdapter extends RecyclerView.Adapter<UrlAdapter.ViewHolder> {
                 if (images.size() > 0) {
                     Picasso.with(holder.mImgMedia.getContext()).load(images.get(0)).into(holder.mImgMedia);
                 }
-                holder.mTxtUrl.setText(finalUrl);
+                holder.mBtnUrl.setText(finalUrl);
+                holder.mBtnUrl.setOnClickListener(view -> {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    holder.mBtnUrl.getContext().startActivity(browserIntent);
+                });
 
             }
         }, mediaUrl);
@@ -89,7 +95,7 @@ public class UrlAdapter extends RecyclerView.Adapter<UrlAdapter.ViewHolder> {
         ImageView mImgMedia;
 
         @BindView(R.id.txt_url)
-        TextView mTxtUrl;
+        Button mBtnUrl;
 
         public ViewHolder(View itemView) {
             super(itemView);
