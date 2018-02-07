@@ -1,7 +1,6 @@
 package com.example.drbozdog.tagzy.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.drbozdog.tagzy.R;
 import com.example.drbozdog.tagzy.entities.TagRecord;
+import com.example.drbozdog.tagzy.entities.TwitterUserTagRecord;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -32,14 +32,14 @@ public class RecordsAdapter extends RecyclerView.Adapter<RecordsAdapter.ViewHold
 
     @Override
     public RecordsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.record_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.twitter_user_item, parent, false);
         ViewHolder holder = new ViewHolder(v);
         return holder;
     }
 
     @Override
     public void onBindViewHolder(RecordsAdapter.ViewHolder holder, int position) {
-        TagRecord current = mTagRecords.get(position);
+        TwitterUserTagRecord current = (TwitterUserTagRecord) mTagRecords.get(position);
         holder.mTxtName.setText(current.getName());
         holder.mTxtDescription.setText(current.getDescription());
         holder.mTxtUrl.setText(current.getUrl());

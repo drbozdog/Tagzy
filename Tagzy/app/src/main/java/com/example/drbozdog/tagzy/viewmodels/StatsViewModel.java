@@ -1,6 +1,7 @@
 package com.example.drbozdog.tagzy.viewmodels;
 
 import com.example.drbozdog.tagzy.entities.StatsMetric;
+import com.example.drbozdog.tagzy.entities.TagJob;
 import com.example.drbozdog.tagzy.managers.TagRecordManager;
 
 
@@ -18,17 +19,19 @@ public class StatsViewModel {
 
     private final TagRecordManager mTagRecordManager;
 
+    TagJob mJob;
+
 
     @Inject
     public StatsViewModel(TagRecordManager tagRecordManager) {
         mTagRecordManager = tagRecordManager;
     }
 
-    public void init() {
-
+    public void init(TagJob job) {
+        mJob = job;
     }
 
     public Observable<List<StatsMetric>> getStats() {
-        return mTagRecordManager.getStats();
+        return mTagRecordManager.getStats(mJob.getId());
     }
 }

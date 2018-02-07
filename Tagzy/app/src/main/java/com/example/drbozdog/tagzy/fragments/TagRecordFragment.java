@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +18,8 @@ import com.example.drbozdog.tagzy.R;
 import com.example.drbozdog.tagzy.TagzyApplication;
 import com.example.drbozdog.tagzy.entities.TagJob;
 import com.example.drbozdog.tagzy.entities.TagRecord;
+import com.example.drbozdog.tagzy.entities.TwitterPostTagRecord;
+import com.example.drbozdog.tagzy.entities.TwitterUserTagRecord;
 import com.example.drbozdog.tagzy.viewmodels.TagRecordFragmentViewModel;
 import com.squareup.picasso.Picasso;
 
@@ -45,18 +47,6 @@ public class TagRecordFragment extends android.support.v4.app.Fragment {
         return tagRecordFragment;
     }
 
-    @BindView(R.id.txt_name)
-    TextView mTxtName;
-    @BindView(R.id.txt_description)
-    TextView mTxtDescription;
-    @BindView(R.id.txt_url)
-    Button mBtnUrl;
-    @BindView(R.id.img_profile_background_image_url)
-    ImageView mImgProfileBackgroundImageUrl;
-    @BindView(R.id.img_profile_banner_url)
-    ImageView mImgProfileBannerUrl;
-    @BindView(R.id.img_profile_image_url)
-    ImageView mImgProfileImage;
     @BindView(R.id.tags_container)
     LinearLayout mTagsContainer;
 
@@ -83,7 +73,7 @@ public class TagRecordFragment extends android.support.v4.app.Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.record_item, container, false);
+        View v = inflater.inflate(R.layout.tagrecord_fragment, container, false);
         ButterKnife.bind(this, v);
 
         updateUI(mViewModel.getTagRecord(), mViewModel.getTagJob());
@@ -103,30 +93,17 @@ public class TagRecordFragment extends android.support.v4.app.Fragment {
         mStatusChangeListener = null;
     }
 
-    private void updateUI(TagRecord current, TagJob job) {
-        mTxtName.setText(current.getName() + "(" + current.getScreen_name() + ")");
-        mTxtDescription.setText(current.getDescription());
-
-        if (current.getProfile_background_image_url() != null && current.getProfile_background_image_url() != "") {
-            Picasso.with(mImgProfileBackgroundImageUrl.getContext()).load(current.getProfile_background_image_url()).into(mImgProfileBackgroundImageUrl);
-        }
-        if (current.getProfile_banner_url() != null && current.getProfile_banner_url() != "") {
-            Picasso.with(mImgProfileBannerUrl.getContext()).load(current.getProfile_banner_url()).into(mImgProfileBannerUrl);
-        }
-        if (current.getProfile_image_url() != null && current.getProfile_image_url() != "") {
-            String profile_image_url = current.getProfile_image_url().replace("_normal", "_bigger");
-            Picasso.with(mImgProfileImage.getContext()).load(profile_image_url).into(mImgProfileImage);
+    private void updateUI(TagRecord currentTagRecord, TagJob job) {
+        Fragment fragment = null;
+        if (job.getType().equals("twitter_user")) {
+            fragment = TwitterUserTagRecordFragment.NewInstance(currentTagRecord);
+        } else if (job.getType().equals("twitter_post")) {
+            fragment = TwitterPostTagRecordFragment.NewInstance(currentTagRecord);
         }
 
-        if (current.getUrl() != null && current.getUrl() != "") {
-            mBtnUrl.setText(current.getUrl());
-            mBtnUrl.setOnClickListener(view -> {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(current.getUrl()));
-                startActivity(browserIntent);
-            });
-        } else {
-            mBtnUrl.setVisibility(View.INVISIBLE);
-        }
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.info_container, fragment)
+                .commit();
 
         for (int r = 0; r < mViewModel.getRows(); r++) {
             LinearLayout layout = new LinearLayout(getContext());
@@ -137,7 +114,8 @@ public class TagRecordFragment extends android.support.v4.app.Fragment {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
                 layout.setLayoutParams(params);
                 Button btnTag = (Button) getActivity().getLayoutInflater().inflate(R.layout.tag_button, null);
-                btnTag.setText(job.getTags().get(i));
+                String predictedValue = String.valueOf(mViewModel.getTagRecord().getPrediction(job.getName(), job.getTags().get(i)));
+                btnTag.setText(job.getTags().get(i) + ":" + predictedValue);
                 btnTag.setOnClickListener(view -> {
                     mViewModel.setSelectedTagIndex(i);
                     updateSelectedTag();
