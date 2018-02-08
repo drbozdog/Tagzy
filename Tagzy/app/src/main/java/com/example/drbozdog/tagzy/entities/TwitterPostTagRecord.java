@@ -14,7 +14,7 @@ public class TwitterPostTagRecord extends TagRecord {
     User user;
     ExtendedTweet extended_tweet;
 
-    public class Entities implements Serializable{
+    public class Entities implements Serializable {
         List<Url> urls;
         List<Media> media;
 
@@ -44,6 +44,10 @@ public class TwitterPostTagRecord extends TagRecord {
         String expanded_url;
         String display_url;
 
+        String title;
+        String description;
+        List<String> images;
+
         public String getUrl() {
             return url;
         }
@@ -54,6 +58,30 @@ public class TwitterPostTagRecord extends TagRecord {
 
         public String getDisplay_url() {
             return display_url;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public List<String> getImages() {
+            return images;
+        }
+
+        public void setImages(List<String> images) {
+            this.images = images;
         }
     }
 

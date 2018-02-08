@@ -3,6 +3,7 @@ package com.example.drbozdog.tagzy.adapters;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ public class UrlAdapter extends RecyclerView.Adapter<UrlAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(UrlAdapter.ViewHolder holder, int position) {
         String mediaUrl = mUrls.get(position);
+        Log.d(TAG, "onBindViewHolder: crawling:" + mediaUrl);
         mTextCrawler.makePreview(new LinkPreviewCallback() {
             @Override
             public void onPre() {
@@ -63,15 +65,17 @@ public class UrlAdapter extends RecyclerView.Adapter<UrlAdapter.ViewHolder> {
                 String canonicalUrl = sourceContent.getCannonicalUrl();
                 String url = sourceContent.getUrl();
 
+                Log.d(TAG, "onPos: " + sourceContent.getUrl() + ";title=" + title);
+
                 holder.mTxtTitle.setText(title);
                 holder.mTxtDescription.setText(description);
                 if (images.size() > 0) {
                     Picasso.with(holder.mImgMedia.getContext()).load(images.get(0)).into(holder.mImgMedia);
                 }
-                holder.mBtnUrl.setText(finalUrl);
-                holder.mBtnUrl.setOnClickListener(view -> {
+
+                holder.mContainerPreview.setOnClickListener(view -> {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    holder.mBtnUrl.getContext().startActivity(browserIntent);
+                    holder.mContainerPreview.getContext().startActivity(browserIntent);
                 });
 
             }
@@ -94,8 +98,8 @@ public class UrlAdapter extends RecyclerView.Adapter<UrlAdapter.ViewHolder> {
         @BindView(R.id.img_image)
         ImageView mImgMedia;
 
-        @BindView(R.id.txt_url)
-        Button mBtnUrl;
+        @BindView(R.id.container_preview)
+        View mContainerPreview;
 
         public ViewHolder(View itemView) {
             super(itemView);

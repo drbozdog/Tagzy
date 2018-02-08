@@ -41,25 +41,7 @@ public class TagRecordViewModel {
     }
 
     public Observable<List<TagRecord>> getRecords() {
-        return mTagRecordManager.getRecords(mJob.getId(), records).map(jsonObjects -> convertToTagRecords(jsonObjects));
-    }
-
-    @NonNull
-    private List<TagRecord> convertToTagRecords(List<JsonObject> jsonObjects) throws Exception {
-        List<TagRecord> records = new ArrayList<>();
-        Gson convertor = new Gson();
-        for (JsonObject json : jsonObjects) {
-            TagRecord record;
-            if (mJob.getType().equals("twitter_user")) {
-                record = convertor.fromJson(json, TwitterUserTagRecord.class);
-            }else if (mJob.getType().equals("twitter_post")){
-                record = convertor.fromJson(json, TwitterPostTagRecord.class);
-            }else{
-                throw new Exception("Tag Record Type not recodnized");
-            }
-            records.add(record);
-        }
-        return records;
+        return mTagRecordManager.getRecords(mJob.getId(), mJob.getType(), records);
     }
 
 

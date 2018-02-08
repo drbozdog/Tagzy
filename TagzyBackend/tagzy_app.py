@@ -6,13 +6,22 @@ from managers.jobs_manager import JobsManager
 from managers.records_manager import RecordsManager
 import argparse
 
-
-
 app = Flask(__name__)
 
-# records_manager = RecordsManager('/tagzyservices/config.json')
-# records_manager = RecordsManager('/Users/drbozdog/TagzyApp/TagzyBackend/config.json')
-records_manager = RecordsManager('/Users/drbozdog/Tagzy/TagzyBackend/config.json')
+parser = argparse.ArgumentParser()
+parser.add_argument("--production", default=False)
+
+arguments = parser.parse_args()
+
+production = arguments.production
+
+print 'Argument production is:{}'.format(production)
+
+if production:
+    records_manager = RecordsManager('/tagzyservices/config.json')
+else:
+    records_manager = RecordsManager('/Users/drbozdog/TagzyApp/TagzyBackend/config.json')
+    # records_manager = RecordsManager('/Users/drbozdog/Tagzy/TagzyBackend/config.json')
 jobs_manager = JobsManager()
 
 
@@ -57,15 +66,8 @@ def get_jobs():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--production", default=False)
-
-    arguments = parser.parse_args()
-
-    production = arguments.production
 
     if production:
-        app.run(host='0.0.0.0', port=16000, debug=True)
+        app.run(host='0.0.0.0', port=8888, debug=True)
     else:
-        app.run(host='0.0.0.0', port=8888, debug=False)
-
+        app.run(host='0.0.0.0', port=16000, debug=False)

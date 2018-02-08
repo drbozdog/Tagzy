@@ -1,6 +1,7 @@
 package com.example.drbozdog.tagzy.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import butterknife.ButterKnife;
 
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> {
 
+    private static final String TAG = MediaAdapter.class.getSimpleName();
     private final List<String> mMediaUrls;
 
     public MediaAdapter(List<String> mediaUrls) {
@@ -37,6 +39,7 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         String mediaUrl = mMediaUrls.get(position);
+        Log.d(TAG, "onBindViewHolder: loading media:" + mediaUrl);
         Picasso.with(holder.mImgMedia.getContext()).load(mediaUrl).into(holder.mImgMedia);
     }
 

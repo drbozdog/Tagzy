@@ -105,7 +105,7 @@ public class TwitterPostTagRecordFragment extends Fragment {
         }
 
         MediaAdapter mediaAdapter = new MediaAdapter(mediaUrls);
-        mRecyclerViewMedia.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, true));
+        mRecyclerViewMedia.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         mRecyclerViewMedia.setAdapter(mediaAdapter);
 
         List<String> urls = new ArrayList<>();
@@ -126,8 +126,11 @@ public class TwitterPostTagRecordFragment extends Fragment {
             }
         }
 
+        Log.d(TAG, "updateUI: urls count:" + urls.size() + " for user:" + current.getUserName()+":"+urls);
+        Log.d(TAG, "updateUI: media count:" + mediaUrls.size() + " for user:" + current.getUserName()+":"+mediaUrls);
+
         UrlAdapter urlAdapter = new UrlAdapter(mTextCrawler, urls);
-        mRecyclerViewUrls.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, true));
+        mRecyclerViewUrls.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerViewUrls.setAdapter(urlAdapter);
     }
 }
