@@ -46,7 +46,7 @@ public class TagRecordActivity extends AppCompatActivity implements TagRecordFra
     @BindView(R.id.pager)
     ViewPager mRecyclerView;
 
-    DisposableObserver<List<TagRecord>> mDisposableSubscriber;
+    DisposableObserver<TagRecord> mDisposableSubscriber;
     RecordsViewPagerAdapter mRecordsAdapter;
 
 
@@ -106,10 +106,10 @@ public class TagRecordActivity extends AppCompatActivity implements TagRecordFra
 
     private void loadRecords() {
         if (mDisposableSubscriber == null || mDisposableSubscriber.isDisposed()) {
-            mDisposableSubscriber = new DisposableObserver<List<TagRecord>>() {
+            mDisposableSubscriber = new DisposableObserver<TagRecord>() {
                 @Override
-                public void onNext(List<TagRecord> tagRecords) {
-                    mRecordsAdapter.update(tagRecords, mTagRecordViewModel.getJob());
+                public void onNext(TagRecord tagRecord) {
+                    mRecordsAdapter.update(tagRecord, mTagRecordViewModel.getJob());
                 }
 
                 @Override

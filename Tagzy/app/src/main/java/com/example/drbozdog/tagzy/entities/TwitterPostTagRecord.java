@@ -39,7 +39,7 @@ public class TwitterPostTagRecord extends TagRecord {
         return extended_tweet;
     }
 
-    public class Url implements Serializable {
+    public static class Url implements Serializable {
         String url;
         String expanded_url;
         String display_url;

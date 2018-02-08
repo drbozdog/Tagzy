@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.drbozdog.tagzy.R;
+import com.example.drbozdog.tagzy.entities.TwitterPostTagRecord;
 import com.leocardz.link.preview.library.LinkPreviewCallback;
 import com.leocardz.link.preview.library.SourceContent;
 import com.leocardz.link.preview.library.TextCrawler;
@@ -30,11 +31,9 @@ import butterknife.ButterKnife;
 public class UrlAdapter extends RecyclerView.Adapter<UrlAdapter.ViewHolder> {
 
     private static final String TAG = UrlAdapter.class.getSimpleName();
-    TextCrawler mTextCrawler;
-    List<String> mUrls;
+    List<TwitterPostTagRecord.Url> mUrls;
 
-    public UrlAdapter(TextCrawler textCrawler, List<String> urls) {
-        mTextCrawler = textCrawler;
+    public UrlAdapter(List<TwitterPostTagRecord.Url> urls) {
         mUrls = urls;
     }
 
@@ -47,39 +46,23 @@ public class UrlAdapter extends RecyclerView.Adapter<UrlAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(UrlAdapter.ViewHolder holder, int position) {
-        String mediaUrl = mUrls.get(position);
-        Log.d(TAG, "onBindViewHolder: crawling:" + mediaUrl);
-        mTextCrawler.makePreview(new LinkPreviewCallback() {
-            @Override
-            public void onPre() {
+        TwitterPostTagRecord.Url currentUrl = mUrls.get(position);
+        String description = currentUrl.getDescription();
+        String title = currentUrl.getTitle();
+        List<String> images = currentUrl.getImages();
+        String url = currentUrl.getUrl();
 
-            }
+        holder.mTxtTitle.setText(title);
+        holder.mTxtDescription.setText(description);
+        if (images != null && images.size() > 0) {
+            Picasso.with(holder.mImgMedia.getContext()).load(images.get(0)).into(holder.mImgMedia);
+        }
 
-            @Override
-            public void onPos(SourceContent sourceContent, boolean b) {
-                String description = sourceContent.getDescription();
-                String title = sourceContent.getTitle();
-                HashMap<String, String> metaTags = sourceContent.getMetaTags();
-                List<String> images = sourceContent.getImages();
-                String finalUrl = sourceContent.getFinalUrl();
-                String canonicalUrl = sourceContent.getCannonicalUrl();
-                String url = sourceContent.getUrl();
+        holder.mContainerPreview.setOnClickListener(view -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            holder.mContainerPreview.getContext().startActivity(browserIntent);
+        });
 
-                Log.d(TAG, "onPos: " + sourceContent.getUrl() + ";title=" + title);
-
-                holder.mTxtTitle.setText(title);
-                holder.mTxtDescription.setText(description);
-                if (images.size() > 0) {
-                    Picasso.with(holder.mImgMedia.getContext()).load(images.get(0)).into(holder.mImgMedia);
-                }
-
-                holder.mContainerPreview.setOnClickListener(view -> {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    holder.mContainerPreview.getContext().startActivity(browserIntent);
-                });
-
-            }
-        }, mediaUrl);
     }
 
     @Override

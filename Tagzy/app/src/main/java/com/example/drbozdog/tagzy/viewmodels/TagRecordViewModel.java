@@ -40,7 +40,7 @@ public class TagRecordViewModel {
         mTagRecordManager = tagRecordManager;
     }
 
-    public Observable<List<TagRecord>> getRecords() {
+    public Observable<TagRecord> getRecords() {
         return mTagRecordManager.getRecords(mJob.getId(), mJob.getType(), records);
     }
 

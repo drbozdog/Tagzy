@@ -38,7 +38,6 @@ public class TwitterPostTagRecordFragment extends Fragment {
     public static final String EXTRA_RECORD = "extra_record";
     private static final String TAG = TwitterPostTagRecordFragment.class.getSimpleName();
     private TagRecord mTagRecord;
-    private TextCrawler mTextCrawler;
 
     public static TwitterPostTagRecordFragment NewInstance(TagRecord tagRecord) {
         TwitterPostTagRecordFragment tagRecordFragment = new TwitterPostTagRecordFragment();
@@ -61,7 +60,6 @@ public class TwitterPostTagRecordFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTagRecord = (TagRecord) getArguments().getSerializable(EXTRA_RECORD);
-        mTextCrawler = new TextCrawler();
     }
 
     @Nullable
@@ -78,9 +76,6 @@ public class TwitterPostTagRecordFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        if (mTextCrawler != null) {
-            mTextCrawler.cancel();
-        }
         super.onDestroy();
     }
 
@@ -108,28 +103,8 @@ public class TwitterPostTagRecordFragment extends Fragment {
         mRecyclerViewMedia.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         mRecyclerViewMedia.setAdapter(mediaAdapter);
 
-        List<String> urls = new ArrayList<>();
-        if (current.getEntities().getUrls() != null) {
-            for (int i = 0; i < current.getEntities().getUrls().size(); i++) {
-                TwitterPostTagRecord.Url url = current.getEntities().getUrls().get(i);
-                if (!urls.contains(url.getExpanded_url())) {
-                    urls.add(url.getExpanded_url());
-                }
-            }
-        }
-        if (current.getExtended_tweet() != null && current.getExtended_tweet().getEntities().getUrls() != null) {
-            for (int i = 0; i < current.getExtended_tweet().getEntities().getUrls().size(); i++) {
-                TwitterPostTagRecord.Url url = current.getExtended_tweet().getEntities().getUrls().get(i);
-                if (!urls.contains(url.getExpanded_url())) {
-                    urls.add(url.getExpanded_url());
-                }
-            }
-        }
 
-        Log.d(TAG, "updateUI: urls count:" + urls.size() + " for user:" + current.getUserName()+":"+urls);
-        Log.d(TAG, "updateUI: media count:" + mediaUrls.size() + " for user:" + current.getUserName()+":"+mediaUrls);
-
-        UrlAdapter urlAdapter = new UrlAdapter(mTextCrawler, urls);
+        UrlAdapter urlAdapter = new UrlAdapter(current.getEntities().getUrls());
         mRecyclerViewUrls.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerViewUrls.setAdapter(urlAdapter);
     }
