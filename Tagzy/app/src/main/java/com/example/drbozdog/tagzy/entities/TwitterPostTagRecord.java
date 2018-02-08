@@ -25,6 +25,10 @@ public class TwitterPostTagRecord extends TagRecord {
         public List<Media> getMedia() {
             return media;
         }
+
+        public void setUrls(List<Url> urls) {
+            this.urls = urls;
+        }
     }
 
     public Entities getEntities() {

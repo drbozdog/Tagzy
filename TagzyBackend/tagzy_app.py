@@ -20,8 +20,8 @@ print 'Argument production is:{}'.format(production)
 if production:
     records_manager = RecordsManager('/tagzyservices/config.json')
 else:
-    # records_manager = RecordsManager('/Users/drbozdog/TagzyApp/TagzyBackend/config.json')
-    records_manager = RecordsManager('/Users/drbozdog/Tagzy/TagzyBackend/config.json')
+    records_manager = RecordsManager('/Users/drbozdog/TagzyApp/TagzyBackend/config.json')
+    # records_manager = RecordsManager('/Users/drbozdog/Tagzy/TagzyBackend/config.json')
 jobs_manager = JobsManager()
 
 

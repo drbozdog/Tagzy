@@ -1,6 +1,5 @@
 package com.example.drbozdog.tagzy.managers;
 
-import android.nfc.Tag;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -17,18 +16,18 @@ import com.leocardz.link.preview.library.TextCrawler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.BiConsumer;
+import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by drbozdog on 16/12/17.
@@ -38,6 +37,8 @@ public class TagRecordManager {
 
     private static final String TAG = TagRecordManager.class.getSimpleName();
     RecordsRepository mRecordsRepository;
+
+    ExecutorService mExecutorService = Executors.newFixedThreadPool(4);
 
 
     @Inject
@@ -51,7 +52,7 @@ public class TagRecordManager {
                 .flatMap(tagRecords -> {
                     if (type.equals("twitter_post")) {
                         return Observable.fromIterable(tagRecords)
-                                .concatMap(tagRecord -> getUrlPreview((TwitterPostTagRecord) tagRecord));
+                                .concatMap(tagRecord -> getPreviewForUrls((TwitterPostTagRecord) tagRecord));
                     } else {
                         return Observable.fromIterable(tagRecords);
                     }
@@ -66,38 +67,54 @@ public class TagRecordManager {
         return mRecordsRepository.getStats(jobid);
     }
 
-    private Observable<TagRecord> getUrlPreview(TwitterPostTagRecord tagRecord) {
-        Log.d(TAG, "getUrlPreview:  " + tagRecord.getEntities().getUrls());
-        if (tagRecord.getExtended_tweet() != null) {
-            Log.d(TAG, "getUrlPreview extended tweet: " + tagRecord.getExtended_tweet().getEntities().getUrls());
-        }
+    private Observable<TagRecord> getPreviewForUrls(TwitterPostTagRecord tagRecord) {
         if (tagRecord.getEntities().getUrls() != null) {
             final TextCrawler textCrawler = new TextCrawler();
+            List<TwitterPostTagRecord.Url> urls = new ArrayList<>();
             return Observable.fromIterable(tagRecord.getEntities().getUrls())
-                    .concatMap((Function<TwitterPostTagRecord.Url, ObservableSource<TwitterPostTagRecord.Url>>) url -> Observable.create(e -> textCrawler.makePreview(new LinkPreviewCallback() {
-                        @Override
-                        public void onPre() {
-
-                        }
-
-                        @Override
-                        public void onPos(SourceContent sourceContent, boolean b) {
-                            url.setTitle(sourceContent.getTitle());
-                            url.setDescription(sourceContent.getDescription());
-                            url.setImages(sourceContent.getImages());
-                            e.onNext(url);
-                            e.onComplete();
-                        }
-                    }, url.getExpanded_url()))).timeout(3, TimeUnit.SECONDS).onErrorReturnItem(new TwitterPostTagRecord.Url()).filter(url -> url.getExpanded_url() != null)
-                    .collectInto(tagRecord, (u, url) -> {
-                    }).map((Function<TwitterPostTagRecord, TagRecord>) twitterPostTagRecord -> twitterPostTagRecord).toObservable().doFinally(() -> textCrawler.cancel());
+                    .concatMap(url -> getPreviewForUrl(url, textCrawler))
+                    .collectInto(urls, (u, url) -> urls.add(url))
+                    .map((Function<List<TwitterPostTagRecord.Url>, TagRecord>) urls1 -> {
+                        tagRecord.getEntities().setUrls(urls1);
+                        return tagRecord;
+                    }).toObservable().doFinally(() -> textCrawler.cancel());
         } else {
             return Observable.just(tagRecord);
         }
+    }
 
-//        if (tagRecord.getExtended_tweet() != null && tagRecord.getExtended_tweet().getEntities().getUrls() != null) {
-//
-//        }
+    private ObservableSource<TwitterPostTagRecord.Url> getPreviewForUrl(TwitterPostTagRecord.Url url, TextCrawler textCrawler) {
+        return Observable.create((ObservableEmitter<TwitterPostTagRecord.Url> e) -> {
+            Log.d(TAG, "getPreviewForUrl: start crawling" + url.getExpanded_url());
+            textCrawler.makePreview(new LinkPreviewCallback() {
+                @Override
+                public void onPre() {
+
+                }
+
+                @Override
+                public void onPos(SourceContent sourceContent, boolean b) {
+                    url.setTitle(sourceContent.getTitle());
+                    url.setDescription(sourceContent.getDescription());
+                    url.setImages(sourceContent.getImages());
+                    e.onNext(url);
+                    e.onComplete();
+                    Log.d(TAG, "onPos: ended crawling" + url.getExpanded_url());
+                }
+            }, url.getExpanded_url());
+        }).timeout(6, TimeUnit.SECONDS)
+                .doOnError(throwable -> Log.d(TAG, "getPreviewForUrl: ended crawling"))
+                .onErrorReturnItem(new TwitterPostTagRecord.Url())
+                .filter(u -> filterEmptyUrl(u));
+    }
+
+    private boolean filterEmptyUrl(TwitterPostTagRecord.Url url) {
+        if (url.getExpanded_url() != null && url.getTitle() != null && url.getDescription() != null
+                && url.getTitle() != "" && url.getDescription() != "") {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @NonNull
