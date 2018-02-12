@@ -73,15 +73,12 @@ class JobsRepository():
                 "type": "twitter_post",
                 "query": [
                     {"$match": {"$and": [
-                        {"$or":
-                            [
-                                {"mining_metadata.tags.Ridgid Professionals Tweets": "Tips"},
-                                {"mining_metadata.tags.Ridgid Professionals Tweets": "Advertising"},
-                                {"mining_metadata.tags.Ridgid Professionals Tweets": "OnSite"},
-                                {"mining_metadata.tags.Ridgid Professionals Tweets": "Product"},
-                            ]
+                        {
+                            "mining-metadata.sources.thetrades-twitter-posts.query": "track=mold,%23mold,%23moldremediation,%23moldremoval"
                         },
                         {"mining_metadata.tags.RP Mold Tweet": {"$exists": False}},
+                        {"retweeted_status": {"$exists": False}},
+                        {"quoted_status": {"$exists": False}},
                     ]
                     }}
                     , {'$sample': {'size': 80}}
@@ -97,11 +94,12 @@ class JobsRepository():
                     }}
                 ],
                 "stats_query": {
-                    "$or": [
-                        {"mining_metadata.tags.Ridgid Professionals Tweets": "Tips"},
-                        {"mining_metadata.tags.Ridgid Professionals Tweets": "Advertising"},
-                        {"mining_metadata.tags.Ridgid Professionals Tweets": "OnSite"},
-                        {"mining_metadata.tags.Ridgid Professionals Tweets": "Product"},
+                    "$and": [
+                        {
+                            "mining-metadata.sources.thetrades-twitter-posts.query": "track=mold,%23mold,%23moldremediation,%23moldremoval"
+                        },
+                        {"retweeted_status": {"$exists": False}},
+                        {"quoted_status": {"$exists": False}},
                     ]
                 },
                 "collection": "thetrades_twitter_posts",
