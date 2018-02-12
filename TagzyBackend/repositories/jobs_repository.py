@@ -66,6 +66,46 @@ class JobsRepository():
                 },
                 "collection": "thetrades_twitter_posts",
                 "tags": ["Advertising", "Tips", "Career", "Product", "OnSite", "None"]
+            },
+            {
+                "id": 3,
+                "name": "RP Mold Tweet",
+                "type": "twitter_post",
+                "query": [
+                    {"$match": {"$and": [
+                        {"$or":
+                            [
+                                {"mining_metadata.tags.Ridgid Professionals Tweets": "Tips"},
+                                {"mining_metadata.tags.Ridgid Professionals Tweets": "Advertising"},
+                                {"mining_metadata.tags.Ridgid Professionals Tweets": "OnSite"},
+                                {"mining_metadata.tags.Ridgid Professionals Tweets": "Product"},
+                            ]
+                        },
+                        {"mining_metadata.tags.RP Mold Tweet": {"$exists": False}},
+                    ]
+                    }}
+                    , {'$sample': {'size': 80}}
+                    , {"$project": {
+                        "_id": False,
+                        "id": True,
+                        "entities": True,
+                        "text": True,
+                        "user.screen_name": True,
+                        "extended_tweet.full_text": True,
+                        "extended_tweet.entities": True,
+                        "mining_metadata.predictions_probabilities.RP Mold Tweet": True
+                    }}
+                ],
+                "stats_query": {
+                    "$or": [
+                        {"mining_metadata.tags.Ridgid Professionals Tweets": "Tips"},
+                        {"mining_metadata.tags.Ridgid Professionals Tweets": "Advertising"},
+                        {"mining_metadata.tags.Ridgid Professionals Tweets": "OnSite"},
+                        {"mining_metadata.tags.Ridgid Professionals Tweets": "Product"},
+                    ]
+                },
+                "collection": "thetrades_twitter_posts",
+                "tags": ["Mold", "None", "None", "None", "None", "None"]
             }
         ]
 
