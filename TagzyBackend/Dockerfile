@@ -10,4 +10,4 @@ EXPOSE 8888
 
 WORKDIR tagzyservices
 
-CMD python /tagzyservices/tagzy_app.py
+CMD python /tagzyservices/tagzy_app.py --production true

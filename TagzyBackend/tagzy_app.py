@@ -16,6 +16,7 @@ arguments = parser.parse_args()
 production = arguments.production
 
 print 'Argument production is:{}'.format(production)
+print 'Argument production type: {}'.format(type(production))
 
 if production:
     records_manager = RecordsManager('/tagzyservices/config.json')
@@ -68,6 +69,6 @@ def get_jobs():
 if __name__ == '__main__':
 
     if production:
-        app.run(host='0.0.0.0', port=8888, debug=True)
+        app.run(host='0.0.0.0', port=8888, debug=False)
     else:
-        app.run(host='0.0.0.0', port=16000, debug=False)
+        app.run(host='0.0.0.0', port=16000, debug=True)
