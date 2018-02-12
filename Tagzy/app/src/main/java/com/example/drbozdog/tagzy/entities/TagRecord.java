@@ -41,7 +41,7 @@ public class TagRecord implements Serializable {
     }
 
     public float getPrediction(String job, String tag) {
-        if (getMining_metadata().getPredictionsProbabilities().containsKey(job) && getMining_metadata().getPredictionsProbabilities().get(job).containsKey(tag)) {
+        if (getMining_metadata().getPredictionsProbabilities()!=null && getMining_metadata().getPredictionsProbabilities().containsKey(job) && getMining_metadata().getPredictionsProbabilities().get(job).containsKey(tag)) {
             return getMining_metadata().getPredictionsProbabilities().get(job).get(tag);
         } else {
             return -1f;
