@@ -16,12 +16,19 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "SERVER_URL", '"http://78.96.152.221:8888"'
+
         }
         debug {
             buildConfigField "String", "SERVER_URL", '"http://10.0.2.2:16000"'
         }
+
+        staging {
+            initWith debug
+            buildConfigField "String", "SERVER_URL", '"http://78.96.152.221:8001"'
+            applicationIdSuffix ".debugStaging"
+        }
     }
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
