@@ -85,7 +85,7 @@ public class TwitterPostTagRecordFragment extends Fragment {
         mTxtPostText.setText(current.getText());
 
         List<String> mediaUrls = new ArrayList<>();
-        if (current.getEntities().getMedia() != null) {
+        if (current.getEntities()!=null && current.getEntities().getMedia() != null) {
             for (int i = 0; i < current.getEntities().getMedia().size(); i++) {
                 TwitterPostTagRecord.Media media = current.getEntities().getMedia().get(i);
                 mediaUrls.add(media.getMedia_url());
@@ -104,8 +104,10 @@ public class TwitterPostTagRecordFragment extends Fragment {
         mRecyclerViewMedia.setAdapter(mediaAdapter);
 
 
-        UrlAdapter urlAdapter = new UrlAdapter(current.getEntities().getUrls());
-        mRecyclerViewUrls.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mRecyclerViewUrls.setAdapter(urlAdapter);
+        if (current.getEntities()!=null) {
+            UrlAdapter urlAdapter = new UrlAdapter(current.getEntities().getUrls());
+            mRecyclerViewUrls.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+            mRecyclerViewUrls.setAdapter(urlAdapter);
+        }
     }
 }

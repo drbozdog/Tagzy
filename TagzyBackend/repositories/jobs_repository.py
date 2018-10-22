@@ -104,6 +104,49 @@ class JobsRepository():
                 },
                 "collection": "thetrades_twitter_posts",
                 "tags": ["Mold", "None", "None", "None", "None", "None"]
+            },
+            {
+                "id": 4,
+                "name": "Festival Tweets",
+                "type": "twitter_post",
+                "query": [
+                    {"$match": {"$and": [
+                        {"$or": [
+                            {"created_at_month":{"$gte":10}},
+                            {"created_at_month":{"$lte":5}}
+                        ]
+                        },
+                        {"mining_metadata.tags.Festival Tweet": {"$exists": False}},
+                        {"retweeted_status": {"$exists": False}},
+                        {"quoted_status": {"$exists": False}},
+                    ]
+                    }}
+                    , {'$sample': {'size': 80}}
+                    , {"$project": {
+                        "_id": False,
+                        "id": True,
+                        "entities": True,
+                        "text": True,
+                        "user.screen_name": True,
+                        "extended_tweet.full_text": True,
+                        "extended_tweet.entities": True,
+                        "created_at_month":True,
+                        "created_at":True
+                    }}
+                ],
+                "stats_query": {
+                    "$and": [
+                        {"$or": [
+                            {"created_at_month": {"$gte": 10}},
+                            {"created_at_month": {"$lte": 5}}
+                        ]
+                        },
+                        {"retweeted_status": {"$exists": False}},
+                        {"quoted_status": {"$exists": False}},
+                    ]
+                },
+                "collection": "onstage_twitter_historical",
+                "tags": ["Announcement", "Tickets", "None", "None", "None", "None"]
             }
         ]
 

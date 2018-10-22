@@ -68,7 +68,7 @@ public class TagRecordManager {
     }
 
     private Observable<TagRecord> getPreviewForUrls(TwitterPostTagRecord tagRecord) {
-        if (tagRecord.getEntities().getUrls() != null) {
+        if (tagRecord.getEntities()!=null && tagRecord.getEntities().getUrls() != null) {
             final TextCrawler textCrawler = new TextCrawler();
             List<TwitterPostTagRecord.Url> urls = new ArrayList<>();
             return Observable.fromIterable(tagRecord.getEntities().getUrls())
